@@ -6,6 +6,8 @@ const port = 3000;
 // mongo connection
 connectToMongo();
 
+app.use(express.json());
+
 // Available routes
 app.use('/api/auth', require("./routes/auth"));
 app.use('/api/notes', require("./routes/notes"));
