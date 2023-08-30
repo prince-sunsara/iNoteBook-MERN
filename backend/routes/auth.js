@@ -2,6 +2,11 @@ const express = require("express")
 const router = express.Router();
 const User = require('../models/User')
 const { body, validationResult } = require('express-validator');
+const bycript = require("bcryptjs");
+var jwt = require('jsonwebtoken');
+
+// secret token
+const JWT_SECRET = 'Mynameis@prince25';
 
 // create user using: POST "/api/auth/createUser": no login require
 router.post('/createuser', [
@@ -20,12 +25,27 @@ router.post('/createuser', [
         let user = await User.findOne({ email: req.body.email })
         
         if (!user) {
+            // password hasing using bycriptjs 
+            const salt = await bycript.genSalt(10);
+            const secPass = await bycript.hash(req.body.password, salt);
+            // creating user
             user = await User.create({
                 name: req.body.name,
                 email: req.body.email,
-                password: req.body.password,
+                password: secPass,
             });
-            return res.status(200).json(user)
+        
+            const data = {
+                user: {
+                    id : user.id
+                }
+            }
+        
+            const authtoken = jwt.sign(data, JWT_SECRET)
+        
+            console.log(authtoken);
+            // return res.status(200).json(user)
+            return res.json({authtoken})
 
         } else {
             return res.status(400).json({ error: "Sorry! user with this email is exist" })
