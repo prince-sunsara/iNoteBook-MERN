@@ -42,9 +42,6 @@ router.post('/createuser', [
             }
         
             const authtoken = jwt.sign(data, JWT_SECRET)
-        
-            console.log(authtoken);
-            // return res.status(200).json(user)
             return res.json({authtoken})
 
         } else {
@@ -53,8 +50,50 @@ router.post('/createuser', [
 
     } catch (error) {
         console.error(error.message);
-        res.status(500).send("Oops! some error occured..)")
+        return res.status(500).send("Internal Server Error!");
     }
 })
 
+// Authenticate a user using: POST "/api/auth/login": no login require
+router.post('/login', [
+    body('email', 'Enter valid email').isEmail(),
+    body('password', 'Password cannot be blank').exists(),
+], async (req, res) => {
+    // if there are errors return 400 and errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+
+    try {
+        // check for valid mail
+        let user = await User.findOne({email})
+        if(!user){
+            return res.status(400).json({error: "Please enter valid email!"})
+        }
+
+        // compare password 
+        const passwordCompare = await bycript.compare(password, user.password);
+        if(!passwordCompare){
+            return res.status(400).json({error: "Incorrect password!"})
+        }
+
+        const data = {
+            user: {
+                id : user.id
+            }
+        }
+    
+        const authtoken = jwt.sign(data, JWT_SECRET)
+        return res.json({authtoken})
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).send("Internal Server Error!");
+    }
+}
+
+)
 module.exports = router;
