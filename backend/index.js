@@ -14,5 +14,5 @@ app.use('/api/notes', require("./routes/notes"));
 
 
 app.listen(port, () => {
-    console.log(`Server is running on ${port}`);
+    console.log(`iNotebook backend is running on ${port}`);
 })
