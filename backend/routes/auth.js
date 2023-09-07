@@ -16,6 +16,7 @@ router.post('/createuser', [
     body('email', 'Enter valid email').isEmail(),
     body('password', 'Password must have atleast 5 char').isLength({ min: 5 }),
 ], async (req, res) => {
+    let success = false;
     // if there are errors return 400 and errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -44,10 +45,11 @@ router.post('/createuser', [
             }
 
             const authtoken = jwt.sign(data, JWT_SECRET)
-            return res.json({ authtoken })
+            success = true;
+            return res.json({ success, authtoken })
 
         } else {
-            return res.status(400).json({ error: "Sorry! user with this email is exist" })
+            return res.status(400).json({ success, error: "Sorry! user with this email is exist" })
         }
 
     } catch (error) {
