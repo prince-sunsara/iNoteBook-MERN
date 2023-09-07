@@ -61,6 +61,7 @@ router.post('/login', [
     body('email', 'Enter valid email').isEmail(),
     body('password', 'Password cannot be blank').exists(),
 ], async (req, res) => {
+    let success = false;
     // if there are errors return 400 and errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -73,13 +74,15 @@ router.post('/login', [
         // check for valid mail
         let user = await User.findOne({ email })
         if (!user) {
-            return res.status(400).json({ error: "Please enter valid email!" })
+            success = false;
+            return res.status(400).json({ success, error: "Please enter valid email!" })
         }
 
         // compare password 
         const passwordCompare = await bycript.compare(password, user.password);
         if (!passwordCompare) {
-            return res.status(400).json({ error: "Incorrect password!" })
+            success = false;
+            return res.status(400).json({ success, error: "Incorrect password!" })
         }
 
         const data = {
@@ -89,7 +92,8 @@ router.post('/login', [
         }
 
         const authtoken = jwt.sign(data, JWT_SECRET)
-        return res.json({ authtoken })
+        success = true;
+        return res.json({ success, authtoken })
 
     } catch (error) {
         console.error(error.message);

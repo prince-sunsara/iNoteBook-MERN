@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router';
 
 function Login() {
 
@@ -7,10 +8,14 @@ function Login() {
         password: ""
     });
 
+    // in v6 we use navigate instead of history
+    const navigate = useNavigate()
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('https://localhost:5000/api/auth/login', {
+            const response = await fetch('http://localhost:5000/api/auth/login', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -18,7 +23,16 @@ function Login() {
                 body: JSON.stringify({ email: credential.email, password: credential.password }),
             });
             const result = await response.json();
-            console.log("Success:", result);
+            // console.log("Success:", result);
+
+            if(result.success){
+                // save the authtoken and redirect
+                localStorage.setItem('token', result.authtoken)
+                navigate("/");
+            } else{
+                alert("Invalid creadentials!")
+            }
+
         } catch (error) {
             console.error("Error:", error);
         }
@@ -42,6 +56,7 @@ function Login() {
                     <div className="mb-3">
                         <label htmlFor="email" className="form-label" >Email</label>
                         <input type="email" className="form-control" id="email" name="email" value={credential.email} onChange={handleChange} required />
+                        <div id='emailhelp' className='form-text'>We'll never share your email with anyone else.</div>
                     </div>
                     <div className="mb-3">
                         <label htmlFor="password" className="form-label">Password</label>
