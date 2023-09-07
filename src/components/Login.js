@@ -1,24 +1,57 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 function Login() {
-  return (
-    <>
-        <div className="container my-3">
+
+    const [credential, setCredential] = useState({
+        email: "",
+        password: ""
+    });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('https://localhost:5000/api/auth/login', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email: credential.email, password: credential.password }),
+            });
+            const result = await response.json();
+            console.log("Success:", result);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
+    const handleChange = (e) => {
+        console.log(e.target.name);
+        setCredential({
+            ...credential,
+            [e.target.name]: e.target.value,
+        })
+
+    }
+
+
+    return (
+        <>
+            <div className="container my-3">
                 <h2>Login now...</h2>
-                <form className='my-3'>
+                <form className='my-3' onSubmit={handleSubmit}>
                     <div className="mb-3">
-                        <label htmlFor="email" className="form-label">Email</label>
-                        <input type="email" className="form-control" id="email" name="email" required/>
+                        <label htmlFor="email" className="form-label" >Email</label>
+                        <input type="email" className="form-control" id="email" name="email" value={credential.email} onChange={handleChange} required />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="password" className="form-label">Password</label>
-                        <input type="password" className="form-control" id="password" name="password" required/>
+                        <input type="password" className="form-control" id="password" name="password" value={credential.password} onChange={handleChange} required />
                     </div>
-                    <button type="submit" className="btn btn-primary" >login</button>
+                    <button type="submit" className="btn btn-primary">login</button>
                 </form>
             </div>
-    </>
-  )
+        </>
+    )
 }
 
 export default Login    
