@@ -41,7 +41,7 @@ function Signup(props) {
   return (
     <>
         <div className="container my-3">
-                <h2>Signup here...</h2>
+                <h2>Signup now and enjoy...</h2>
                 <form className='my-3' onSubmit={handleSubmit}>
                     <div className="mb-3">
                         <label htmlFor="name" className="form-label">Name</label>
@@ -60,7 +60,7 @@ function Signup(props) {
                         <label htmlFor="cpassword" className="form-label">Confirm Password</label>
                         <input type="password" className="form-control" id="cpassword" name="cpassword" onChange={handleChange} minLength={5} value={credentials.cpassword} required/>
                     </div>
-                    <button type="submit" className="btn btn-primary">login</button>
+                    <button type="submit" className="btn btn-primary">Signup</button>
                 </form>
             </div>
     </>

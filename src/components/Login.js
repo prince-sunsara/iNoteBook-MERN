@@ -27,8 +27,8 @@ function Login(props) {
             if(result.success){
                 // save the authtoken and redirect
                 localStorage.setItem('token', result.authtoken)
-                navigate("/");
                 props.showAlert("Successfully logged in!", "success")
+                navigate("/");
             } else{
                 props.showAlert("Invalid creadentials!", "danger")
             }
@@ -50,7 +50,7 @@ function Login(props) {
     return (
         <>
             <div className="container my-3">
-                <h2>Login now...</h2>
+                <h2>Login for enjoying the iNotebook App...</h2>
                 <form className='my-3' onSubmit={handleSubmit}>
                     <div className="mb-3">
                         <label htmlFor="email" className="form-label" >Email</label>
